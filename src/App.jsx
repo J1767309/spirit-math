@@ -10,6 +10,14 @@ const NEEKS_IMAGES = [
   '/neeks-pasta.jpg',
   '/neeks-mall.jpg',
   '/neeks-astronaut.jpg',
+  '/neeks-lightsaber.jpg',
+  '/neeks-sledding.jpg',
+  '/neeks-diner.jpg',
+  '/neeks-skewers.jpg',
+  '/neeks-katana.jpg',
+  '/neeks-aquarium.jpg',
+  '/neeks-swords.jpg',
+  '/neeks-eds.jpg',
 ]
 
 const SPIRITED_IMAGES = {
