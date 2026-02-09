@@ -432,7 +432,26 @@ export default function App() {
   const [neeksImageIdx, setNeeksImageIdx] = useState(0)
   const [shakeFeedback, setShakeFeedback] = useState(false)
   const [hakuFlying, setHakuFlying] = useState(false)
+  const [heroImage, setHeroImage] = useState(0)
   const timerRef = useRef(null)
+
+  const HERO_IMAGES = [
+    '/chihiro-happy.jpg',
+    '/chihiro-poster.jpg',
+    '/chihiro-riding-haku.jpg',
+    '/haku-bridge-sunset.jpg',
+    '/haku-dragon-art.jpg',
+    '/chihiro-running-stairs.jpg',
+    '/chihiro-window.jpg',
+    '/bathhouse-roof.jpg',
+    '/kamaji-boilerman.jpg',
+    '/noface-soot-haku-pin.jpg',
+    '/chihiro-noface-ocean.jpg',
+    '/chihiro-lanterns-dark.jpg',
+    '/noface-offering.jpg',
+    '/yubaba-chihiro.jpg',
+    '/noface-zeniba-table.jpg',
+  ]
 
   const TARGET_COINS = 15
   const TOTAL_TIME = 1200 // 20 minutes
@@ -482,6 +501,7 @@ export default function App() {
     setHakuFlying(false)
     setSootMood('neutral')
     setNeeksImageIdx(randInt(0, NEEKS_IMAGES.length - 1))
+    setHeroImage(randInt(0, HERO_IMAGES.length - 1))
     const q = generateQuestion(mode, grade, difficulty)
     setCurrentQuestion(q)
     setScreen('playing')
@@ -528,9 +548,16 @@ export default function App() {
   function nextQuestion() {
     setSootMood('neutral')
     setNeeksImageIdx(randInt(0, NEEKS_IMAGES.length - 1))
+    setHeroImage(prev => (prev + 1) % HERO_IMAGES.length)
     const q = generateQuestion(mode, grade, difficulty)
     setCurrentQuestion(q)
     setScreen('playing')
+  }
+
+  // ---- Exit game ----
+  function exitGame() {
+    clearInterval(timerRef.current)
+    setScreen('start')
   }
 
   // ---- Urgency (how close No-Face is) ----
@@ -703,6 +730,7 @@ export default function App() {
         {/* Header bar */}
         <div className="game-header">
           <div className="header-left">
+            <button className="btn-exit" onClick={exitGame}>✕</button>
             <NeeksAvatar size={36} imageIndex={neeksImageIdx} className="header-neeks" />
             <div className={`timer ${isUrgent ? 'timer-urgent' : ''}`}>
               ⏱ {formatTime(timeRemaining)}
@@ -737,6 +765,9 @@ export default function App() {
 
         {/* Question card */}
         <div className="question-area">
+          <div className="question-hero-img">
+            <img src={HERO_IMAGES[heroImage]} alt="" className="hero-img" />
+          </div>
           <div className="question-card">
             <div className="question-label">What is...</div>
             <div className="question-text">{currentQuestion.question} = ?</div>
@@ -780,6 +811,7 @@ export default function App() {
         {/* Header still visible */}
         <div className="game-header">
           <div className="header-left">
+            <button className="btn-exit" onClick={exitGame}>✕</button>
             <NeeksAvatar size={36} imageIndex={neeksImageIdx} className="header-neeks" />
             <div className={`timer ${isUrgent ? 'timer-urgent' : ''}`}>
               ⏱ {formatTime(timeRemaining)}
@@ -1200,6 +1232,27 @@ const globalStyles = `
     z-index: 10;
   }
 
+  .btn-exit {
+    background: rgba(255,255,255,0.1);
+    color: #faf3e0;
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .btn-exit:active {
+    background: rgba(192, 57, 43, 0.3);
+  }
+
   .btn-option {
     background: rgba(255,255,255,0.08);
     color: #c8c0a8;
@@ -1392,11 +1445,29 @@ const globalStyles = `
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 12px 16px;
     z-index: 5;
     width: 100%;
     max-width: 500px;
-    gap: 20px;
+    gap: 12px;
+  }
+
+  .question-hero-img {
+    width: 100%;
+    max-width: 280px;
+    height: 100px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid rgba(240, 192, 64, 0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    animation: fade-in 0.5s ease;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .question-card {
